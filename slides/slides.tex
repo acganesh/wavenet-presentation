@@ -8,6 +8,10 @@
 \usepackage{graphicx}
 \usepackage{animate}
 \usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\DeclareMathOperator{\sgn}{sgn}
 
 % Make LaTeX math render using normal fonts
 \usefonttheme{professionalfonts} % required for mathspec
@@ -75,7 +79,7 @@ Sans Light}
 
   \begin{frame}{Three Approaches to Generative Models}
     \begin{itemize}
-      \item VAEs allow efficient Bayesian inference in PGMs with complex latent spaces (e.g. Gregor et al. 2015, DRAW: A Recurrent Neural Network For Image Generation)
+      \item VAEs allow efficient Bayesian inference over complex distributions (e.g. Gregor et al. 2015, DRAW: A Recurrent Neural Network For Image Generation)
 
         \begin{itemize}
           \item However, often need to make independence assumptions
@@ -129,13 +133,11 @@ Sans Light}
   \end{figure}
 \end{frame}
 
-% Add animated gif of signal density using this technique:
-% http://tex.stackexchange.com/questions/240243/getting-gif-and-or-moving-images-into-a-latex-presentation
 
     \begin{frame}{Temporal Resolution}
       \begin{figure}
       \animategraphics[loop,controls,width=\linewidth]{12}{img/audio_res/audio_res-}{0}{279}
-      \caption{Using dialted convolutions, WaveNet is able to model raw waveforms at 16KHz (image: DeepMind)}
+      \caption{Using dilated convolutions, WaveNet is able to model raw waveforms at 16KHz (image: DeepMind)}
     \end{figure}
     \end{frame}
 
@@ -168,7 +170,7 @@ Sans Light}
 
   \begin{frame}{Dilated convolutional layers}
     \begin{itemize}
-      \item Let $F$ be a discrete function, and $k$ be a discrete filter of size $(2r+1)^2$.  The discrete convolution operator $*$ is defined as
+      \item Let $F$ be a discrete function, and $k$ be a discrete filter.  The discrete convolution operator $*$ is defined as
         \[
           (F * k)(\mathbf{p}) = \sum_{\mathbf{s+t=p}} F(\mathbf{s}) k(\mathbf{t}).
         \]
@@ -196,12 +198,13 @@ Sans Light}
 
   \begin{frame}{Softmax distribution}
     \begin{itemize}
-      \item Softmax empirically found to outperform mixture models (van den Oord et al. 2016) e.g. MCGSM\footnote{Theis et al., 2015} (even though audio waveforms are continuous)
+      \item Softmax used to model output $p(x_t | x_1, \dots, x_{t-1})$, even though audio waveforms are continuous
+      \item Empirically found to outperform mixture models, e.g. MCGSM \footnote{Theis et al., 2015}  
       \item Raw audio typically stored as time series of 16-bit integer values (65,356 possibilities)
           \begin{itemize}
             \item Authors use a $\mu$-law companding transformation to quantize to 256 possible values
               \[
-                f(x_t) = \sign(x_t) \frac{\ln(1 + \mu |x_t|)}{\ln (1 + \mu)},
+                f(x_t) = \sgn(x_t) \frac{\ln(1 + \mu |x_t|)}{\ln (1 + \mu)},
               \]
               where $-1 < x_t < 1$ and $\mu = 255$.
             \item Well-known signal processing transform -- better reconstruction than linear quantization
@@ -270,7 +273,7 @@ Sans Light}
         \[
           \mathbf{z} = \tanh(W_{f, k} * \mathbf{x} + V_{f, k}^T \mathbf{h}) \odot (W_{g, k} * \mathbf{x} + V_{g, k}^T \mathbf{h}),
         \]
-        where $V_{*, k}$ is a learned linear projection, and $V_{*, k}^T \mathbf{h}$ is broadcast over the time dimension.
+        where $V_{*, k}$ is a learned linear projection
     \end{itemize}
   \end{frame}
 
@@ -366,7 +369,7 @@ Sans Light}
       \item  Oord, Aaron van den, Nal Kalchbrenner, and Koray Kavukcuoglu. "Pixel recurrent neural networks." arXiv preprint arXiv:1601.06759 (2016).
         
       \item Salimans, Tim, et al. "PixelCNN++: Improving the PixelCNN with Discretized Logistic Mixture Likelihood and Other Modifications." arXiv preprint arXiv:1701.05517 (2017).
-      \item Gulrajani, Ishaan, et al. "PixelVAE: A Latent Variable Model for Natural Images." arXiv preprint arXiv:1611.05013 (2016).
+      \item Gulrajani, Ishaan, et al. "PixelVAE: A Latent Variable Model for Natural Images." arXiv preprint arXiv:1611.05013 (2017).
       \item Mehri, Soroush, et al. "SampleRNN: An Unconditional End-to-End Neural Audio Generation Model." arXiv preprint arXiv:1612.07837 (2016).
         
     \end{itemize}
